@@ -1,9 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.request.ArticleRequestDto;
-import com.example.demo.dto.request.ReceiptBarcodeRequestDto;
-import com.example.demo.dto.request.ReceiptDailyIncomeRequestDto;
-import com.example.demo.dto.request.ReceiptRequestDto;
+import com.example.demo.dto.request.*;
 import com.example.demo.dto.response.ArticleResponseDto;
 import com.example.demo.dto.response.ReceiptResponseDto;
 import com.example.demo.entity.Article;
@@ -36,8 +33,8 @@ public class ReceiptController {
         return ResponseEntity.ok().build();
     }
     @PostMapping("/daily-income")
-    public ResponseEntity<Double> calculateDailyIncome(@RequestBody ReceiptDailyIncomeRequestDto receiptDailyIncomeRequestDto) {
-        double income = receiptService.calculateDailyIncome(receiptDailyIncomeRequestDto);
+    public ResponseEntity<Double> calculateDailyIncome(@RequestBody DateRequestDto dateRequestDto) {
+        double income = receiptService.calculateDailyIncome(dateRequestDto);
         return ResponseEntity.ok(income);
     }
 

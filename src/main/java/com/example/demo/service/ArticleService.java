@@ -1,9 +1,9 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.request.ArticlesDailyIncomeRequestDto;
-import com.example.demo.dto.request.StockDateRequestDto;
+import com.example.demo.dto.request.DateRequestDto;
 import com.example.demo.dto.response.ArticleDailyIncomeResponseDto;
 import com.example.demo.dto.response.ArticleListDailyIncomeResponseDto;
+import com.example.demo.dto.response.DepartmentsIncomeResponseDto;
 import com.example.demo.entity.Article;
 import com.example.demo.entity.Receipt;
 import com.example.demo.entity.Stock;
@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ArticleService {
@@ -31,10 +33,9 @@ public class ArticleService {
     public Article addArticle(Article article) {
         return articleRepository.save(article);
     }
-    public ArticleListDailyIncomeResponseDto calculateArticlesDailyIncome(ArticlesDailyIncomeRequestDto articlesDailyIncomeRequestDto) {
-        ArticleListDailyIncomeResponseDto articleListDailyIncomeResponseDto = new ArticleListDailyIncomeResponseDto();
-        articleListDailyIncomeResponseDto.setArticles(new ArrayList<>());
-        LocalDate date = LocalDate.parse(articlesDailyIncomeRequestDto.getDate());
+    public ArticleListDailyIncomeResponseDto calculateArticlesDailyIncome(DateRequestDto dateRequestDto) {
+        ArticleListDailyIncomeResponseDto articleListDailyIncomeResponseDto = new ArticleListDailyIncomeResponseDto(new ArrayList<>());
+        LocalDate date = LocalDate.parse(dateRequestDto.getDate());
         List<Receipt> receipts = receiptRepository.findAllByEmissionDate(date);
 
         List<Long> allArticleIds = receipts.stream()
@@ -47,13 +48,30 @@ public class ArticleService {
                     Long articleSold = allArticleIds.stream()
                             .filter(id -> id.equals(articleId))
                             .count();
-                    var price = priceRepository.findTopByArticleIdAndValidityDateLessThanEqualOrderByValidityDateDesc(
+                    var price = priceRepository.findTopByArticleIdAndValidityDateFromLessThanEqualOrderByValidityDateFromDesc(
                             articleId, date).orElseThrow();
-                    Double dailyIncome =price.getValue() * articleSold;
+                    Double dailyIncome = price.getValue() * articleSold;
                     var article = articleRepository.findById(articleId).orElseThrow();
                     articleListDailyIncomeResponseDto.getArticles().add(new ArticleDailyIncomeResponseDto(article,articleSold,dailyIncome));
                 });
         return articleListDailyIncomeResponseDto;
+    }
+    public DepartmentsIncomeResponseDto calculateDepartmentsDailyIncome(DateRequestDto dateRequestDto) {
+        LocalDate date = LocalDate.parse(dateRequestDto.getDate());
+        List<Receipt> receipts = receiptRepository.findAllByEmissionDate(date);
+
+        Map<String, Double> departmentIncomeMap = new HashMap<>();
+
+        receipts.stream()
+                .flatMap(receipt -> receipt.getArticleIds().stream())
+                .forEach(articleId -> {
+                    var article = articleRepository.findById(articleId).orElseThrow();
+                    var price = priceRepository.findTopByArticleIdAndValidityDateFromLessThanEqualOrderByValidityDateFromDesc(
+                            articleId, date).orElseThrow();
+                    departmentIncomeMap.merge(article.getDepartment(), price.getValue(), Double::sum);
+                });
+
+        return new DepartmentsIncomeResponseDto(departmentIncomeMap);
     }
 
 

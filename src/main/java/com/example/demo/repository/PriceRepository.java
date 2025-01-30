@@ -10,5 +10,5 @@ import java.util.Optional;
 
 @Repository
 public interface PriceRepository extends JpaRepository<Price, Long> {
-    Optional<Price> findTopByArticleIdAndValidityDateLessThanEqualOrderByValidityDateDesc(Long articleId, LocalDate validityDate);
+    Optional<Price> findTopByArticleIdAndValidityDateFromLessThanEqualOrderByValidityDateFromDesc(Long articleId, LocalDate validityDateFrom);
 }

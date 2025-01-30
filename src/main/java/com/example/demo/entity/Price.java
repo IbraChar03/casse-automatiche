@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +16,8 @@ public class Price {
     private Long id;
 
     private Double value;
-    private LocalDate validityDate;
+    @Column(name = "validity_date_from")
+    private LocalDate validityDateFrom;
 
     @Column(name = "article_id")
     private Long articleId;

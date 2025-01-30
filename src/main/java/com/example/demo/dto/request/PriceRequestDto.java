@@ -8,6 +8,6 @@ import lombok.Setter;
 public class PriceRequestDto {
     private Long id;
     private Double value;
-    private String validityDate;
+    private String validityDateFrom;
     private Long articleId;
 }

@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.request.DateRequestDto;
 import com.example.demo.dto.request.ReceiptRequestDto;
-import com.example.demo.dto.request.StockDateRequestDto;
 import com.example.demo.dto.response.ReceiptResponseDto;
 import com.example.demo.service.ArticleService;
 import com.example.demo.service.StockService;
@@ -19,8 +19,8 @@ public class StockController {
     @Autowired
     private StockService stockService;
     @PostMapping("/calculate")
-    public ResponseEntity<Void> calculateStockEndOfDay(@RequestBody StockDateRequestDto date) {
-        stockService.calculateStockEndOfDay(date);
+    public ResponseEntity<Void> calculateStockEndOfDay(@RequestBody DateRequestDto dateRequestDto) {
+        stockService.calculateStockEndOfDay(dateRequestDto);
         return ResponseEntity.ok().build();
     }
 }

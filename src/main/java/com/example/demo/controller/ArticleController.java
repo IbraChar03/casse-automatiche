@@ -1,10 +1,10 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.request.ArticleRequestDto;
-import com.example.demo.dto.request.ArticlesDailyIncomeRequestDto;
-import com.example.demo.dto.request.ReceiptDailyIncomeRequestDto;
+import com.example.demo.dto.request.DateRequestDto;
 import com.example.demo.dto.response.ArticleListDailyIncomeResponseDto;
 import com.example.demo.dto.response.ArticleResponseDto;
+import com.example.demo.dto.response.DepartmentsIncomeResponseDto;
 import com.example.demo.entity.Article;
 import com.example.demo.mapper.ArticleMapper;
 import com.example.demo.service.ArticleService;
@@ -30,8 +30,13 @@ public class ArticleController {
         return ResponseEntity.ok(articleMapper.entityToResponse(article));
     }
     @PostMapping("/articles-income")
-    public ResponseEntity<ArticleListDailyIncomeResponseDto> calculateArticlesDailyIncome(@RequestBody ArticlesDailyIncomeRequestDto articlesDailyIncomeRequestDto) {
-        var list = articleService.calculateArticlesDailyIncome(articlesDailyIncomeRequestDto);
+    public ResponseEntity<ArticleListDailyIncomeResponseDto> calculateArticlesDailyIncome(@RequestBody DateRequestDto dateRequestDto) {
+        var list = articleService.calculateArticlesDailyIncome(dateRequestDto);
+        return ResponseEntity.ok(list);
+    }
+    @PostMapping("/departments-income")
+    public ResponseEntity<DepartmentsIncomeResponseDto> calculateDepartmentsDailyIncome(@RequestBody DateRequestDto dateRequestDto) {
+        var list = articleService.calculateDepartmentsDailyIncome(dateRequestDto);
         return ResponseEntity.ok(list);
     }
 }

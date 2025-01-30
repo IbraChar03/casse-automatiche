@@ -5,6 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ReceiptDailyIncomeRequestDto {
+public class DateRequestDto {
     private String date;
 }

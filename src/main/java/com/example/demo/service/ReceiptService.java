@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.request.ReceiptDailyIncomeRequestDto;
+import com.example.demo.dto.request.DateRequestDto;
 import com.example.demo.entity.Article;
 import com.example.demo.entity.Barcode;
 import com.example.demo.entity.Price;
@@ -49,8 +49,8 @@ public class ReceiptService {
         receiptRepository.save(receipt);
     }
 
-    public double calculateDailyIncome(ReceiptDailyIncomeRequestDto receiptDailyIncomeRequestDto) {
-        LocalDate date = LocalDate.parse(receiptDailyIncomeRequestDto.getDate());
+    public double calculateDailyIncome(DateRequestDto dateRequestDto) {
+        LocalDate date = LocalDate.parse(dateRequestDto.getDate());
         List<Receipt> receipts = receiptRepository.findAllByEmissionDate(date);
         return receipts.stream()
                 .mapToDouble(this::calculateTotalReceipt)
@@ -60,7 +60,7 @@ public class ReceiptService {
     private double calculateTotalReceipt(Receipt receipt) {
         return receipt.getArticleIds().stream()
                 .mapToDouble(articleId -> {
-                    var price = priceRepository.findTopByArticleIdAndValidityDateLessThanEqualOrderByValidityDateDesc(
+                    var price = priceRepository.findTopByArticleIdAndValidityDateFromLessThanEqualOrderByValidityDateFromDesc(
                             articleId, receipt.getEmissionDate());
 
                     return price.map(Price::getValue).orElse(0.0);

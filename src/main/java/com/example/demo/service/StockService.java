@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.request.StockDateRequestDto;
+import com.example.demo.dto.request.DateRequestDto;
 import com.example.demo.entity.Receipt;
 import com.example.demo.entity.Stock;
 import com.example.demo.repository.ReceiptRepository;
@@ -20,8 +20,8 @@ public class StockService {
     @Autowired
     private StockRepository stockRepository;
 
-    public void calculateStockEndOfDay(StockDateRequestDto stockDate) {
-        LocalDate date = LocalDate.parse(stockDate.getDate());
+    public void calculateStockEndOfDay(DateRequestDto dateRequestDto) {
+        LocalDate date = LocalDate.parse(dateRequestDto.getDate());
         List<Receipt> receipts = receiptRepository.findAllByEmissionDate(date);
 
         List<Long> allArticleIds = receipts.stream()
