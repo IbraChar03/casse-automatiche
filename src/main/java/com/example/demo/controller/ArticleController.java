@@ -1,6 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.request.ArticleRequestDto;
+import com.example.demo.dto.request.ArticlesDailyIncomeRequestDto;
+import com.example.demo.dto.request.ReceiptDailyIncomeRequestDto;
+import com.example.demo.dto.response.ArticleListDailyIncomeResponseDto;
 import com.example.demo.dto.response.ArticleResponseDto;
 import com.example.demo.entity.Article;
 import com.example.demo.mapper.ArticleMapper;
@@ -24,6 +27,11 @@ public class ArticleController {
     @PostMapping
     public ResponseEntity<ArticleResponseDto> createArticle(@RequestBody ArticleRequestDto articleRequestDto) {
         Article article = articleService.addArticle(articleMapper.requestToEntity(articleRequestDto));
-        return new ResponseEntity<>(articleMapper.entityToResponse(article),HttpStatus.OK);
+        return ResponseEntity.ok(articleMapper.entityToResponse(article));
+    }
+    @PostMapping("/articles-income")
+    public ResponseEntity<ArticleListDailyIncomeResponseDto> calculateArticlesDailyIncome(@RequestBody ArticlesDailyIncomeRequestDto articlesDailyIncomeRequestDto) {
+        var list = articleService.calculateArticlesDailyIncome(articlesDailyIncomeRequestDto);
+        return ResponseEntity.ok(list);
     }
 }

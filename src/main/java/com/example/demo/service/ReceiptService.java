@@ -60,9 +60,6 @@ public class ReceiptService {
     private double calculateTotalReceipt(Receipt receipt) {
         return receipt.getArticleIds().stream()
                 .mapToDouble(articleId -> {
-                    Article article = articleRepository.findById(articleId)
-                            .orElseThrow();
-
                     var price = priceRepository.findTopByArticleIdAndValidityDateLessThanEqualOrderByValidityDateDesc(
                             articleId, receipt.getEmissionDate());
 

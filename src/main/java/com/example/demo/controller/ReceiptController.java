@@ -28,7 +28,7 @@ public class ReceiptController {
     @PostMapping
     public ResponseEntity<ReceiptResponseDto> createReceipt(@RequestBody ReceiptRequestDto receiptRequestDto) {
         var receipt = receiptService.createReceipt(receiptMapper.requestToEntity(receiptRequestDto));
-        return new ResponseEntity<>(receiptMapper.entityToResponse(receipt), HttpStatus.OK);
+        return ResponseEntity.ok(receiptMapper.entityToResponse(receipt));
     }
     @PostMapping("/add-article/{id}")
     public ResponseEntity<Void> addArticleReceipt(@RequestBody ReceiptBarcodeRequestDto receiptBarcodeRequestDto, @PathVariable String id) {
@@ -40,4 +40,5 @@ public class ReceiptController {
         double income = receiptService.calculateDailyIncome(receiptDailyIncomeRequestDto);
         return ResponseEntity.ok(income);
     }
+
 }
