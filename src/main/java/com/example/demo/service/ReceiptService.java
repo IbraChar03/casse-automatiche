@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.commons.exception.GenericErrorException;
 import com.example.demo.dto.request.DateRequestDto;
 import com.example.demo.entity.Article;
 import com.example.demo.entity.Barcode;
@@ -37,6 +38,9 @@ public class ReceiptService {
     public void addArticleToReceipt(String barcodeString, String receiptId) {
         Barcode barcode = barcodeRepository.findByCode(barcodeString)
                 .orElseThrow();
+        if(barcode.getValidityStartDate().isAfter(LocalDate.now()) || barcode.getValidityEndDate().isBefore(LocalDate.now())){
+            throw new GenericErrorException("invalid barcode");
+        }
 
         Article article = articleRepository.findById(barcode.getArticleId())
                 .orElseThrow();
