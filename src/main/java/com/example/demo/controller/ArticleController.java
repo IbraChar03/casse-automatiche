@@ -26,17 +26,17 @@ public class ArticleController {
         Article article = articleService.addArticle(articleMapper.requestToEntity(articleRequestDto));
         return ResponseEntity.ok(articleMapper.entityToResponse(article));
     }
-    @GetMapping("/articles-income")
+    @GetMapping("/articles-daily-income")
     public ResponseEntity<ArticleListDailyIncomeResponseDto> calculateArticlesDailyIncome(@RequestParam String date) {
         var list = articleService.calculateArticlesDailyIncome(date);
         return ResponseEntity.ok(list);
     }
-    @GetMapping("/departments-income")
+    @GetMapping("/departments-daily-income")
     public ResponseEntity<DepartmentsIncomeResponseDto> calculateDepartmentsDailyIncome(@RequestParam String date) {
         var list = articleService.calculateDepartmentsDailyIncome(date);
         return ResponseEntity.ok(list);
     }
-    @GetMapping("/departments-income/{year}")
+    @GetMapping("/departments-yearly-income")
     public ResponseEntity<DepartmentsIncomeResponseDto> calculateDepartmentsYearlyIncome(@RequestParam String year) {
         var list = articleService.calculateDepartmentsYearlyIncome(year);
         return ResponseEntity.ok(list);

@@ -68,7 +68,9 @@ public class ArticleService {
                     var article = articleRepository.findById(articleId).orElseThrow();
                     var price = priceRepository.findTopByArticleIdAndValidityDateFromLessThanEqualOrderByValidityDateFromDesc(
                             articleId, date).orElseThrow();
-                    departmentIncomeMap.merge(article.getDepartment(), price.getValue(), Double::sum);
+                    long quantitySold = receipt.getArticleIds().stream().filter(id -> id.equals(articleId)).count();
+                    double totalIncome = price.getValue() * quantitySold;
+                    departmentIncomeMap.merge(article.getDepartment(), totalIncome, Double::sum);
                 }));
         return new DepartmentsIncomeResponseDto(departmentIncomeMap);
     }
@@ -81,12 +83,12 @@ public class ArticleService {
                     var article = articleRepository.findById(articleId).orElseThrow();
                     var price = priceRepository.findTopByArticleIdAndValidityDateFromLessThanEqualOrderByValidityDateFromDesc(
                             articleId, receipt.getEmissionDate()).orElseThrow();
-                    departmentIncomeMap.merge(article.getDepartment(), price.getValue(), Double::sum);
+                    long quantitySold = receipt.getArticleIds().stream().filter(id -> id.equals(articleId)).count();
+                    double totalIncome = price.getValue() * quantitySold;
+                    departmentIncomeMap.merge(article.getDepartment(), totalIncome, Double::sum);
                 }));
 
         return new DepartmentsIncomeResponseDto(departmentIncomeMap);
     }
-
-
 
 }
