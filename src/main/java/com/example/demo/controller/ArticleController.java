@@ -11,10 +11,7 @@ import com.example.demo.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/article")
@@ -29,14 +26,19 @@ public class ArticleController {
         Article article = articleService.addArticle(articleMapper.requestToEntity(articleRequestDto));
         return ResponseEntity.ok(articleMapper.entityToResponse(article));
     }
-    @PostMapping("/articles-income")
-    public ResponseEntity<ArticleListDailyIncomeResponseDto> calculateArticlesDailyIncome(@RequestBody DateRequestDto dateRequestDto) {
-        var list = articleService.calculateArticlesDailyIncome(dateRequestDto);
+    @GetMapping("/articles-income")
+    public ResponseEntity<ArticleListDailyIncomeResponseDto> calculateArticlesDailyIncome(@RequestParam String date) {
+        var list = articleService.calculateArticlesDailyIncome(date);
         return ResponseEntity.ok(list);
     }
-    @PostMapping("/departments-income")
-    public ResponseEntity<DepartmentsIncomeResponseDto> calculateDepartmentsDailyIncome(@RequestBody DateRequestDto dateRequestDto) {
-        var list = articleService.calculateDepartmentsDailyIncome(dateRequestDto);
+    @GetMapping("/departments-income")
+    public ResponseEntity<DepartmentsIncomeResponseDto> calculateDepartmentsDailyIncome(@RequestParam String date) {
+        var list = articleService.calculateDepartmentsDailyIncome(date);
+        return ResponseEntity.ok(list);
+    }
+    @GetMapping("/departments-income/{year}")
+    public ResponseEntity<DepartmentsIncomeResponseDto> calculateDepartmentsYearlyIncome(@RequestParam String year) {
+        var list = articleService.calculateDepartmentsYearlyIncome(year);
         return ResponseEntity.ok(list);
     }
 }

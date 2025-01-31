@@ -20,8 +20,8 @@ public class StockService {
     @Autowired
     private StockRepository stockRepository;
 
-    public void calculateStockEndOfDay(DateRequestDto dateRequestDto) {
-        LocalDate date = LocalDate.parse(dateRequestDto.getDate());
+    public void calculateStockEndOfDay(String dateString) {
+        LocalDate date = LocalDate.parse(dateString);
         List<Receipt> receipts = receiptRepository.findAllByEmissionDate(date);
 
         List<Long> allArticleIds = receipts.stream()

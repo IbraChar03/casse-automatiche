@@ -32,9 +32,9 @@ public class ReceiptController {
         receiptService.addArticleToReceipt(receiptBarcodeRequestDto.getBarcode(),id);
         return ResponseEntity.ok().build();
     }
-    @PostMapping("/daily-income")
-    public ResponseEntity<Double> calculateDailyIncome(@RequestBody DateRequestDto dateRequestDto) {
-        double income = receiptService.calculateDailyIncome(dateRequestDto);
+    @GetMapping("/daily-income")
+    public ResponseEntity<Double> calculateDailyIncome(@RequestParam String date) {
+        double income = receiptService.calculateDailyIncome(date);
         return ResponseEntity.ok(income);
     }
 

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,9 +34,9 @@ public class ArticleService {
     public Article addArticle(Article article) {
         return articleRepository.save(article);
     }
-    public ArticleListDailyIncomeResponseDto calculateArticlesDailyIncome(DateRequestDto dateRequestDto) {
+    public ArticleListDailyIncomeResponseDto calculateArticlesDailyIncome(String dateString) {
         ArticleListDailyIncomeResponseDto articleListDailyIncomeResponseDto = new ArticleListDailyIncomeResponseDto(new ArrayList<>());
-        LocalDate date = LocalDate.parse(dateRequestDto.getDate());
+        LocalDate date = LocalDate.parse(dateString);
         List<Receipt> receipts = receiptRepository.findAllByEmissionDate(date);
 
         List<Long> allArticleIds = receipts.stream()
@@ -56,20 +57,32 @@ public class ArticleService {
                 });
         return articleListDailyIncomeResponseDto;
     }
-    public DepartmentsIncomeResponseDto calculateDepartmentsDailyIncome(DateRequestDto dateRequestDto) {
-        LocalDate date = LocalDate.parse(dateRequestDto.getDate());
+    public DepartmentsIncomeResponseDto calculateDepartmentsDailyIncome(String dateString) {
+        LocalDate date = LocalDate.parse(dateString);
         List<Receipt> receipts = receiptRepository.findAllByEmissionDate(date);
 
         Map<String, Double> departmentIncomeMap = new HashMap<>();
 
         receipts.stream()
-                .flatMap(receipt -> receipt.getArticleIds().stream())
-                .forEach(articleId -> {
+                .forEach(receipt -> receipt.getArticleIds().forEach(articleId -> {
                     var article = articleRepository.findById(articleId).orElseThrow();
                     var price = priceRepository.findTopByArticleIdAndValidityDateFromLessThanEqualOrderByValidityDateFromDesc(
                             articleId, date).orElseThrow();
                     departmentIncomeMap.merge(article.getDepartment(), price.getValue(), Double::sum);
-                });
+                }));
+        return new DepartmentsIncomeResponseDto(departmentIncomeMap);
+    }
+
+    public DepartmentsIncomeResponseDto calculateDepartmentsYearlyIncome(String year) {
+        List<Receipt> receipts = receiptRepository.findAllByEmissionDateYear(Integer.valueOf(year));
+        Map<String, Double> departmentIncomeMap = new HashMap<>();
+        receipts.stream()
+                .forEach(receipt -> receipt.getArticleIds().forEach(articleId -> {
+                    var article = articleRepository.findById(articleId).orElseThrow();
+                    var price = priceRepository.findTopByArticleIdAndValidityDateFromLessThanEqualOrderByValidityDateFromDesc(
+                            articleId, receipt.getEmissionDate()).orElseThrow();
+                    departmentIncomeMap.merge(article.getDepartment(), price.getValue(), Double::sum);
+                }));
 
         return new DepartmentsIncomeResponseDto(departmentIncomeMap);
     }

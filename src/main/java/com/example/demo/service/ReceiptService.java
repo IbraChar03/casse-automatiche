@@ -49,8 +49,8 @@ public class ReceiptService {
         receiptRepository.save(receipt);
     }
 
-    public double calculateDailyIncome(DateRequestDto dateRequestDto) {
-        LocalDate date = LocalDate.parse(dateRequestDto.getDate());
+    public double calculateDailyIncome(String dateString) {
+        LocalDate date = LocalDate.parse(dateString);
         List<Receipt> receipts = receiptRepository.findAllByEmissionDate(date);
         return receipts.stream()
                 .mapToDouble(this::calculateTotalReceipt)
