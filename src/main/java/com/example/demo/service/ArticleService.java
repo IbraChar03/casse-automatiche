@@ -63,7 +63,7 @@ public class ArticleService {
 
         Map<String, Double> departmentIncomeMap = new HashMap<>();
 
-        receipts.stream()
+        receipts
                 .forEach(receipt -> receipt.getArticleIds().forEach(articleId -> {
                     var article = articleRepository.findById(articleId).orElseThrow();
                     var price = priceRepository.findTopByArticleIdAndValidityDateFromLessThanEqualOrderByValidityDateFromDesc(
@@ -78,7 +78,7 @@ public class ArticleService {
     public DepartmentsIncomeResponseDto calculateDepartmentsYearlyIncome(String year) {
         List<Receipt> receipts = receiptRepository.findAllByEmissionDateYear(Integer.valueOf(year));
         Map<String, Double> departmentIncomeMap = new HashMap<>();
-        receipts.stream()
+        receipts
                 .forEach(receipt -> receipt.getArticleIds().forEach(articleId -> {
                     var article = articleRepository.findById(articleId).orElseThrow();
                     var price = priceRepository.findTopByArticleIdAndValidityDateFromLessThanEqualOrderByValidityDateFromDesc(

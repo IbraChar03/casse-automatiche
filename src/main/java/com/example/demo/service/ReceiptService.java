@@ -37,16 +37,16 @@ public class ReceiptService {
 
     public void addArticleToReceipt(String barcodeString, String receiptId) {
         Barcode barcode = barcodeRepository.findByCode(barcodeString)
-                .orElseThrow();
+                .orElseThrow(() -> new GenericErrorException("Invalid barcode id"));
         if(barcode.getValidityStartDate().isAfter(LocalDate.now()) || barcode.getValidityEndDate().isBefore(LocalDate.now())){
             throw new GenericErrorException("invalid barcode");
         }
 
         Article article = articleRepository.findById(barcode.getArticleId())
-                .orElseThrow();
+                .orElseThrow(() -> new GenericErrorException("Invalid article id"));
 
         Receipt receipt = receiptRepository.findById(Long.valueOf(receiptId))
-                .orElseThrow();
+                .orElseThrow(() -> new GenericErrorException("Invalid receipt id"));
 
         receipt.getArticleIds().add(article.getId());
 
@@ -63,12 +63,11 @@ public class ReceiptService {
 
     private double calculateTotalReceipt(Receipt receipt) {
         return receipt.getArticleIds().stream()
-                .mapToDouble(articleId -> {
-                    var price = priceRepository.findTopByArticleIdAndValidityDateFromLessThanEqualOrderByValidityDateFromDesc(
-                            articleId, receipt.getEmissionDate());
-
-                    return price.map(Price::getValue).orElse(0.0);
-                })
+                .mapToDouble(articleId -> priceRepository
+                        .findTopByArticleIdAndValidityDateFromLessThanEqualOrderByValidityDateFromDesc(articleId, receipt.getEmissionDate())
+                        .map(Price::getValue)
+                        .orElseThrow(() -> new GenericErrorException("Price not found for article: " + articleId))
+                )
                 .sum();
     }
 }
